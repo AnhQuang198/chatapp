@@ -1,0 +1,20 @@
+# Go build
+/bin/
+/build/
+/dist/
+*.exe
+*.log
+
+# IDEs
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+
+# Env config
+.env
+config/*.yaml
+
+# Sqlc
+/models/
