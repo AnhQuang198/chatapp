@@ -4,8 +4,8 @@ CREATE TABLE users
     id         BIGSERIAL PRIMARY KEY,
     username   VARCHAR(50),
     full_name  VARCHAR(200),
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Table: rooms
@@ -15,8 +15,8 @@ CREATE TABLE rooms
     room_name  VARCHAR(200),
     user_ids   VARCHAR(200),
     is_group   BOOLEAN,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Table: room_history
@@ -27,8 +27,8 @@ CREATE TABLE room_history
     user_id    INTEGER,
     join_at    TIMESTAMP,
     leave_at   TIMESTAMP,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Table: messages
@@ -42,8 +42,8 @@ CREATE TABLE messages
     level      INTEGER,     -- level of messages
     parent_id  INTEGER,     -- id parent of messages
     content    TEXT,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Table: message_status
@@ -54,6 +54,6 @@ CREATE TABLE message_status
     user_id    INTEGER,
     is_read    BOOLEAN DEFAULT FALSE,
     read_at    TIMESTAMP,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

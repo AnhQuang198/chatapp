@@ -1,11 +1,11 @@
 server:
-  port: ":8888"
+  port: ${SERVER_PORT}
 
 database:
   driver: "postgres"
-  host: "host.docker.internal"
+  host: ${DB_HOST}
   port: 5432
   user: ${DB_USERNAME}
-  password: "admin123!@#"
-  name: "chatapp"
+  password: ${DB_PASSWORD}
+  name: ${DB_NAME}
   sslmode: "disable"
