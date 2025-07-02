@@ -12,8 +12,6 @@ import (
 
 type RoomService interface {
 	CreateRoom(ctx context.Context, roomDTO dto.RoomDTO, createUserId int64) error
-	DeleteRoom(ctx context.Context, roomId int64) error
-	GetRoomByIds(ctx context.Context, roomIds []int64) ([]*dto.RoomDTO, error)
 }
 
 type roomService struct {
@@ -32,16 +30,8 @@ func (m *roomService) CreateRoom(ctx context.Context, roomDTO dto.RoomDTO, creat
 		UserIds:  utils.ToNullString(userIds),
 		IsGroup:  utils.ToNullBool(roomDTO.IsGroup),
 	}
-	if err := m.repo.CreateRoom(ctx, arg); err != nil {
+	if err := m.repo.Create(ctx, arg); err != nil {
 		return fmt.Errorf("create new message: %w", err)
 	}
 	return nil
-}
-
-func (m *roomService) DeleteRoom(ctx context.Context, roomId int64) error {
-	return nil
-}
-
-func (m *roomService) GetRoomByIds(ctx context.Context, roomIds []int64) ([]*dto.RoomDTO, error) {
-	return nil, nil
 }

@@ -10,7 +10,10 @@ SELECT * FROM rooms;
 SELECT * FROM rooms r WHERE r.id = $1;
 
 -- name: GetRoomByIds :many
-SELECT * FROM rooms r WHERE r.id IN ($1);
+SELECT * FROM rooms r WHERE r.id = ANY($1::bigint[]);
 
 -- name: RemoveRoom :exec
 DELETE FROM rooms WHERE id = $1;
+
+-- name: ListRoomsByUserId :many
+SELECT * FROM public.rooms WHERE $1 = ANY(string_to_array(user_ids, ','));
