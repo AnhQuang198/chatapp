@@ -7,7 +7,7 @@ import (
 )
 
 type UserRepository interface {
-	CreateUser(ctx context.Context, user models.CreateUserParams) error
+	BaseRepository[models.User, models.CreateUserParams]
 }
 
 type userRepository struct {
@@ -18,9 +18,25 @@ func NewUserRepository(db *sql.DB) *userRepository {
 	return &userRepository{queries: models.New(db)}
 }
 
-func (m *userRepository) CreateUser(ctx context.Context, user models.CreateUserParams) error {
+func (m *userRepository) Create(ctx context.Context, user models.CreateUserParams) error {
 	if _, err := m.queries.CreateUser(ctx, user); err != nil {
 		return err
 	}
 	return nil
+}
+
+func (m *userRepository) Delete(ctx context.Context, userId int64) error {
+	return m.queries.DeleteUser(ctx, userId)
+}
+
+func (m *userRepository) GetById(ctx context.Context, userId int64) (*models.User, error) {
+	userData, err := m.queries.GetUserById(ctx, userId)
+	if err != nil {
+		return nil, err
+	}
+	return &userData, nil
+}
+
+func (m *userRepository) GetByIds(ctx context.Context, ids []int64) ([]models.User, error) {
+	return m.queries.GetUserByIds(ctx, ids)
 }

@@ -7,11 +7,11 @@ import (
 	"chatapp/utils"
 	"context"
 	"fmt"
-	"strconv"
 )
 
 type RoomService interface {
 	CreateRoom(ctx context.Context, roomDTO dto.RoomDTO, createUserId int64) error
+	GetRoomsByUserId(ctx context.Context, userId int64) ([]dto.RoomDTO, error)
 }
 
 type roomService struct {
@@ -23,15 +23,29 @@ func NewRoomService(repo repository.RoomRepository) RoomService {
 }
 
 func (m *roomService) CreateRoom(ctx context.Context, roomDTO dto.RoomDTO, createUserId int64) error {
-	userIds := roomDTO.UserIds + "," + strconv.FormatInt(createUserId, 10)
+	userIds := append(roomDTO.UserIds, createUserId)
 	//TODO: validate info DTO after save
 	arg := models.CreateRoomParams{
 		RoomName: utils.ToNullString(roomDTO.RoomName),
-		UserIds:  utils.ToNullString(userIds),
+		UserIds:  userIds,
 		IsGroup:  utils.ToNullBool(roomDTO.IsGroup),
 	}
 	if err := m.repo.Create(ctx, arg); err != nil {
-		return fmt.Errorf("create new message: %w", err)
+		return fmt.Errorf("create new room: %w", err)
 	}
 	return nil
+}
+
+func (m *roomService) GetRoomsByUserId(ctx context.Context, userId int64) ([]dto.RoomDTO, error) {
+	roomEntity, err := m.repo.ListRoomsByUserId(ctx, userId)
+	if err != nil {
+		return nil, fmt.Errorf("list rooms: %w", err)
+	}
+
+	var results []dto.RoomDTO
+	for _, room := range roomEntity {
+		roomDTO := dto.ConvertToDTO(room)
+		results = append(results, roomDTO)
+	}
+	return results, nil
 }

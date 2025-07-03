@@ -13,7 +13,7 @@ CREATE TABLE rooms
 (
     id         BIGSERIAL PRIMARY KEY,
     room_name  VARCHAR(200),
-    user_ids   VARCHAR(200),
+    user_ids   BIGINT[],
     is_group   BOOLEAN,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -23,8 +23,8 @@ CREATE TABLE rooms
 CREATE TABLE room_history
 (
     id         BIGSERIAL PRIMARY KEY,
-    room_id    INTEGER,
-    user_id    INTEGER,
+    room_id    BIGINT,
+    user_id    BIGINT,
     join_at    TIMESTAMP,
     leave_at   TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -35,12 +35,12 @@ CREATE TABLE room_history
 CREATE TABLE messages
 (
     id         BIGSERIAL PRIMARY KEY,
-    sender_id  INTEGER NOT NULL,
-    room_id    INTEGER NOT NULL,
+    sender_id  BIGINT NOT NULL,
+    room_id    BIGINT NOT NULL,
     image_url  VARCHAR(100),
     tree_path  VARCHAR(50), -- path level vd: 1,3,5
-    level      INTEGER,     -- level of messages
-    parent_id  INTEGER,     -- id parent of messages
+    level      INTEGER NOT NULL,     -- level of messages
+    parent_id  BIGINT,     -- id parent of messages
     content    TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -50,10 +50,12 @@ CREATE TABLE messages
 CREATE TABLE message_status
 (
     id         BIGSERIAL PRIMARY KEY,
-    message_id INTEGER,
-    user_id    INTEGER,
+    message_id BIGINT,
+    user_id    BIGINT,
     is_read    BOOLEAN DEFAULT FALSE,
     read_at    TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX idx_user_ids_gin ON rooms USING GIN (user_ids);

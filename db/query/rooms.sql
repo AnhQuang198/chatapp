@@ -16,4 +16,4 @@ SELECT * FROM rooms r WHERE r.id = ANY($1::bigint[]);
 DELETE FROM rooms WHERE id = $1;
 
 -- name: ListRoomsByUserId :many
-SELECT * FROM public.rooms WHERE $1 = ANY(string_to_array(user_ids, ','));
+SELECT * FROM rooms WHERE $1::BIGINT = ANY(user_ids);

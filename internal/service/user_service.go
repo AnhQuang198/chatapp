@@ -27,7 +27,7 @@ func (m *userService) CreateUser(ctx context.Context, userDTO dto.CreateUserDTO)
 		Username: utils.ToNullString(userDTO.Username),
 		FullName: utils.ToNullString(userDTO.FullName),
 	}
-	if err := m.repo.CreateUser(ctx, arg); err != nil {
+	if err := m.repo.Create(ctx, arg); err != nil {
 		return fmt.Errorf("create new message: %w", err)
 	}
 	return nil

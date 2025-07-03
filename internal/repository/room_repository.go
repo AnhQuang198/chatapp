@@ -8,6 +8,7 @@ import (
 
 type RoomRepository interface {
 	BaseRepository[models.Room, models.CreateRoomParams]
+	ListRoomsByUserId(ctx context.Context, userId int64) ([]models.Room, error)
 }
 
 type roomRepository struct {
@@ -39,4 +40,8 @@ func (m *roomRepository) GetById(ctx context.Context, roomId int64) (*models.Roo
 
 func (m *roomRepository) GetByIds(ctx context.Context, ids []int64) ([]models.Room, error) {
 	return m.queries.GetRoomByIds(ctx, ids)
+}
+
+func (m *roomRepository) ListRoomsByUserId(ctx context.Context, userId int64) ([]models.Room, error) {
+	return m.queries.ListRoomsByUserId(ctx, userId)
 }

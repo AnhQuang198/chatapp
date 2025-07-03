@@ -15,7 +15,16 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 		{
 			users.POST("/register", handler.Register(db))
 		}
+		rooms := v1.Group("/rooms")
+		{
+			rooms.POST("/:userId", handler.CreateRoom(db))
+			rooms.GET("/:userId", handler.GetRoomsByUserId(db))
+		}
+		messages := v1.Group("/messages")
+		{
+			messages.GET("/:roomId", handler.GetMessageByRoomId(db))
+			messages.POST("/:userId", handler.CreateMessage(db))
+		}
 	}
-
 	return r
 }
