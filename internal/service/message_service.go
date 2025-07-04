@@ -44,7 +44,7 @@ func (m *messageService) SendMessage(ctx context.Context, senderId int64, msgDto
 		ParentID: utils.ToNullInt64(msgDto.ParentId),
 		Content:  utils.ToNullString(msgDto.Content),
 	}
-	if err := m.repo.Create(ctx, arg); err != nil {
+	if _, err := m.repo.Create(ctx, arg); err != nil {
 		return fmt.Errorf("create new message: %w", err)
 	}
 	return nil

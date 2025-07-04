@@ -10,8 +10,9 @@ import (
 )
 
 type RoomService interface {
-	CreateRoom(ctx context.Context, roomDTO dto.RoomDTO, createUserId int64) error
+	CreateRoom(ctx context.Context, roomDTO dto.RoomDTO, createUserId int64) (int64, error)
 	GetRoomsByUserId(ctx context.Context, userId int64) ([]dto.RoomDTO, error)
+	GetRoomById(ctx context.Context, roomId int64) (dto.RoomDTO, error)
 }
 
 type roomService struct {
@@ -22,7 +23,7 @@ func NewRoomService(repo repository.RoomRepository) RoomService {
 	return &roomService{repo: repo}
 }
 
-func (m *roomService) CreateRoom(ctx context.Context, roomDTO dto.RoomDTO, createUserId int64) error {
+func (m *roomService) CreateRoom(ctx context.Context, roomDTO dto.RoomDTO, createUserId int64) (int64, error) {
 	userIds := append(roomDTO.UserIds, createUserId)
 	//TODO: validate info DTO after save
 	arg := models.CreateRoomParams{
@@ -30,10 +31,11 @@ func (m *roomService) CreateRoom(ctx context.Context, roomDTO dto.RoomDTO, creat
 		UserIds:  userIds,
 		IsGroup:  utils.ToNullBool(roomDTO.IsGroup),
 	}
-	if err := m.repo.Create(ctx, arg); err != nil {
-		return fmt.Errorf("create new room: %w", err)
+	id, err := m.repo.Create(ctx, arg)
+	if err != nil {
+		return 0, fmt.Errorf("create new room: %w", err)
 	}
-	return nil
+	return id, nil
 }
 
 func (m *roomService) GetRoomsByUserId(ctx context.Context, userId int64) ([]dto.RoomDTO, error) {
@@ -48,4 +50,13 @@ func (m *roomService) GetRoomsByUserId(ctx context.Context, userId int64) ([]dto
 		results = append(results, roomDTO)
 	}
 	return results, nil
+}
+
+func (m *roomService) GetRoomById(ctx context.Context, roomId int64) (dto.RoomDTO, error) {
+	roomEntity, err := m.repo.GetById(ctx, roomId)
+	if err != nil {
+		return dto.RoomDTO{}, fmt.Errorf("get room by id: %w", err)
+	}
+
+	return dto.ConvertToDTO(*roomEntity), nil
 }

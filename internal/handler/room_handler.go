@@ -28,7 +28,7 @@ func CreateRoom(db *sql.DB) func(*gin.Context) {
 		repo := repository.NewRoomRepository(db)
 		roomService := service.NewRoomService(repo)
 
-		if err := roomService.CreateRoom(c.Request.Context(), roomDTO, userId); err != nil {
+		if _, err := roomService.CreateRoom(c.Request.Context(), roomDTO, userId); err != nil {
 			c.JSON(http.StatusBadRequest, err)
 			return
 		}

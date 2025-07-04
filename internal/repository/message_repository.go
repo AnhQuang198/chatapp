@@ -19,11 +19,8 @@ func NewMessageRepository(db *sql.DB) *messageRepository {
 	return &messageRepository{queries: models.New(db)}
 }
 
-func (m *messageRepository) Create(ctx context.Context, msg models.CreateMessageParams) error {
-	if _, err := m.queries.CreateMessage(ctx, msg); err != nil {
-		return err
-	}
-	return nil
+func (m *messageRepository) Create(ctx context.Context, msg models.CreateMessageParams) (int64, error) {
+	return m.queries.CreateMessage(ctx, msg)
 }
 
 func (m *messageRepository) Delete(ctx context.Context, msgId int64) error {

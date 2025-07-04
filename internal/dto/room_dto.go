@@ -15,6 +15,13 @@ type RoomDTO struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 }
 
+func NewRoomDTO(roomId int64) RoomDTO {
+	return RoomDTO{
+		Id:      roomId,
+		UserIds: make([]int64, 0),
+	}
+}
+
 func ConvertToDTO(room models.Room) RoomDTO {
 	return RoomDTO{
 		Id:        room.ID,

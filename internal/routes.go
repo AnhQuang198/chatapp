@@ -2,6 +2,7 @@ package internal
 
 import (
 	"chatapp/internal/handler"
+	"chatapp/internal/service/websocket"
 	"database/sql"
 	"github.com/gin-gonic/gin"
 )
@@ -24,6 +25,11 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 		{
 			messages.GET("/:roomId", handler.GetMessageByRoomId(db))
 			messages.POST("/:userId", handler.CreateMessage(db))
+		}
+		hub := websocket.NewHub()
+		chat := r.Group("/chat")
+		{
+			chat.GET("", handler.JoinRoom(db, hub))
 		}
 	}
 	return r

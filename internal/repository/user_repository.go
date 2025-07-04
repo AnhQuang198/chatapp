@@ -18,11 +18,8 @@ func NewUserRepository(db *sql.DB) *userRepository {
 	return &userRepository{queries: models.New(db)}
 }
 
-func (m *userRepository) Create(ctx context.Context, user models.CreateUserParams) error {
-	if _, err := m.queries.CreateUser(ctx, user); err != nil {
-		return err
-	}
-	return nil
+func (m *userRepository) Create(ctx context.Context, user models.CreateUserParams) (int64, error) {
+	return m.queries.CreateUser(ctx, user)
 }
 
 func (m *userRepository) Delete(ctx context.Context, userId int64) error {
