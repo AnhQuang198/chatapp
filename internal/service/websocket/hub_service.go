@@ -6,7 +6,6 @@ import (
 	"chatapp/internal/service"
 	"context"
 	"database/sql"
-	"encoding/json"
 	"log"
 	"sync"
 )
@@ -27,10 +26,10 @@ func (h *Hub) Join(ctx context.Context, db *sql.DB, roomId int64, c *Client) {
 	room, ok := h.rooms[roomId]
 	h.mutex.Unlock()
 
-	if !ok {
-		repo := repository.NewRoomRepository(db)
-		roomService := service.NewRoomService(repo)
+	repo := repository.NewRoomRepository(db)
+	roomService := service.NewRoomService(repo)
 
+	if !ok {
 		roomDTO, err := roomService.GetRoomById(ctx, roomId)
 		persisted := false
 		if err != nil {
@@ -48,20 +47,19 @@ func (h *Hub) Join(ctx context.Context, db *sql.DB, roomId int64, c *Client) {
 		h.rooms[roomId] = room
 		h.mutex.Unlock()
 	} else {
-		//TODO: update userId for user_ids in room
+		if room.Info.Id != 0 {
+			roomDTO := room.Info
+			roomDTO.UserIds = append(roomDTO.UserIds, c.userId)
+			//TODO: update userId for user_ids in room
+			if err := roomService.UpdateRoomUserId(ctx, roomDTO); err != nil {
+				log.Println("Error updating room:", roomDTO)
+				return
+			}
+		}
 	}
 
 	room.Join(c)
-
-	if room.Persisted {
-		repo := repository.NewMessageRepository(db)
-		messageService := service.NewMessageService(repo)
-		lstMessages, _ := messageService.GetMessageByRoomId(ctx, roomId)
-		for _, m := range lstMessages {
-			data, _ := json.Marshal(m)
-			c.send <- string(data)
-		}
-	}
+	log.Printf("User %d joined room %d", c.userId, roomId)
 }
 
 func (h *Hub) GetRoom(roomId int64) *Room {

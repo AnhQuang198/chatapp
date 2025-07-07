@@ -36,13 +36,14 @@ func (m *messageService) SendMessage(ctx context.Context, senderId int64, msgDto
 	}
 	//TODO: validate info DTO after save
 	arg := models.CreateMessageParams{
-		RoomID:   msgDto.RoomId,
-		SenderID: senderId,
-		TreePath: utils.ToNullString(msgDto.TreePath),
-		ImageUrl: utils.ToNullString(msgDto.ImageUrl),
-		Level:    level,
-		ParentID: utils.ToNullInt64(msgDto.ParentId),
-		Content:  utils.ToNullString(msgDto.Content),
+		RoomID:     msgDto.RoomId,
+		SenderID:   senderId,
+		ReceiverID: msgDto.ReceiverId,
+		TreePath:   utils.ToNullString(msgDto.TreePath),
+		ImageUrl:   utils.ToNullString(msgDto.ImageUrl),
+		Level:      level,
+		ParentID:   utils.ToNullInt64(msgDto.ParentId),
+		Content:    utils.ToNullString(msgDto.Content),
 	}
 	if _, err := m.repo.Create(ctx, arg); err != nil {
 		return fmt.Errorf("create new message: %w", err)

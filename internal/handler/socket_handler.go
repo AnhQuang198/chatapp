@@ -52,8 +52,5 @@ func JoinRoom(db *sql.DB, hub *websocket2.Hub) func(*gin.Context) {
 
 		<-done
 		conn.Close(websocket.StatusNormalClosure, "")
-
-		//go client.ReadLoop(ctx, db, hub.GetRoom(roomId))
-		//go client.WriteLoop(ctx)
 	}
 }

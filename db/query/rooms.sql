@@ -17,3 +17,6 @@ DELETE FROM rooms WHERE id = $1;
 
 -- name: ListRoomsByUserId :many
 SELECT * FROM rooms WHERE $1::BIGINT = ANY(user_ids);
+
+-- name: UpdateRoomUserId :exec
+UPDATE rooms SET user_ids = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $1;

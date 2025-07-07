@@ -13,6 +13,7 @@ type RoomService interface {
 	CreateRoom(ctx context.Context, roomDTO dto.RoomDTO, createUserId int64) (int64, error)
 	GetRoomsByUserId(ctx context.Context, userId int64) ([]dto.RoomDTO, error)
 	GetRoomById(ctx context.Context, roomId int64) (dto.RoomDTO, error)
+	UpdateRoomUserId(ctx context.Context, roomDTO dto.RoomDTO) error
 }
 
 type roomService struct {
@@ -59,4 +60,24 @@ func (m *roomService) GetRoomById(ctx context.Context, roomId int64) (dto.RoomDT
 	}
 
 	return dto.ConvertToDTO(*roomEntity), nil
+}
+
+func (m *roomService) UpdateRoomUserId(ctx context.Context, roomDTO dto.RoomDTO) error {
+	if roomDTO.Id <= 0 {
+		return fmt.Errorf("room id is nil")
+	}
+	roomEntity, err := m.repo.GetById(ctx, roomDTO.Id)
+	if err != nil {
+		return fmt.Errorf("room is not existed (roomId): %w", err)
+	}
+	roomEntity.UserIds = roomDTO.UserIds
+
+	updateParams := models.UpdateRoomUserIdParams{
+		ID:      roomEntity.ID,
+		UserIds: roomEntity.UserIds,
+	}
+	if err := m.repo.UpdateRoomUserId(ctx, updateParams); err != nil {
+		return fmt.Errorf("update room user: %w", err)
+	}
+	return nil
 }
