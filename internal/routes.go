@@ -3,6 +3,7 @@ package internal
 import (
 	"chatapp/internal/handler"
 	"chatapp/internal/service/websocket"
+	"chatapp/middleware"
 	"database/sql"
 	"github.com/gin-gonic/gin"
 )
@@ -10,11 +11,12 @@ import (
 func SetupRouter(db *sql.DB) *gin.Engine {
 	r := gin.Default()
 
-	v1 := r.Group("/v1")
+	v1 := r.Group("/v1", middleware.CORSMiddleware())
 	{
 		users := v1.Group("/users")
 		{
 			users.POST("/register", handler.Register(db))
+			users.GET("", handler.GetListUser(db))
 		}
 		rooms := v1.Group("/rooms")
 		{

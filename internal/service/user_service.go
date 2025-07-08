@@ -11,6 +11,7 @@ import (
 
 type UserService interface {
 	CreateUser(ctx context.Context, userDTO dto.CreateUserDTO) error
+	GetAllUsers(ctx context.Context) ([]dto.UserDTO, error)
 }
 
 type userService struct {
@@ -31,4 +32,19 @@ func (m *userService) CreateUser(ctx context.Context, userDTO dto.CreateUserDTO)
 		return fmt.Errorf("create new message: %w", err)
 	}
 	return nil
+}
+
+func (m *userService) GetAllUsers(ctx context.Context) ([]dto.UserDTO, error) {
+	lstUsers, err := m.repo.GetAllUsers(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("get all users: %w", err)
+	}
+
+	var results []dto.UserDTO
+	for _, user := range lstUsers {
+		userDTO := dto.ConvertUserToDTO(user)
+		results = append(results, userDTO)
+	}
+	return results, nil
 }

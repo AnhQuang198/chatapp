@@ -187,8 +187,7 @@ func (r *Room) Broadcast(hub *Hub, db *sql.DB, ctx context.Context, msg dto.Mess
 		r.Info = roomDTO
 		r.Persisted = true
 
-		//add sender to newRoom
-		r.Join(sender)
+		sender.roomId = roomId
 
 		//Update hub
 		hub.mutex.Lock()

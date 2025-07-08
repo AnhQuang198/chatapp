@@ -32,3 +32,17 @@ func Register(db *sql.DB) func(*gin.Context) {
 		c.JSON(http.StatusOK, utils.SimpleSuccessResponse(nil))
 	}
 }
+
+func GetListUser(db *sql.DB) func(*gin.Context) {
+	return func(c *gin.Context) {
+		userRepository := repository.NewUserRepository(db)
+		userService := service.NewUserService(userRepository)
+
+		result, err := userService.GetAllUsers(c.Request.Context())
+		if err != nil {
+			c.JSON(http.StatusBadRequest, err)
+			return
+		}
+		c.JSON(http.StatusOK, utils.SimpleSuccessResponse(result))
+	}
+}

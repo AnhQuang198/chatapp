@@ -8,6 +8,7 @@ import (
 
 type UserRepository interface {
 	BaseRepository[models.User, models.CreateUserParams]
+	GetAllUsers(ctx context.Context) ([]models.User, error)
 }
 
 type userRepository struct {
@@ -36,4 +37,8 @@ func (m *userRepository) GetById(ctx context.Context, userId int64) (*models.Use
 
 func (m *userRepository) GetByIds(ctx context.Context, ids []int64) ([]models.User, error) {
 	return m.queries.GetUserByIds(ctx, ids)
+}
+
+func (m *userRepository) GetAllUsers(ctx context.Context) ([]models.User, error) {
+	return m.queries.ListUsers(ctx)
 }

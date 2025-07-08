@@ -30,5 +30,6 @@ func main() {
 	}
 
 	r := internal.SetupRouter(db)
+
 	r.Run(cfg.Server.Port)
 }
